@@ -36,6 +36,13 @@ PASS
 ok  	crypto/crypto	10.192s
 ```
 
+### Coverage
+```
+go test -cover
+PASS
+coverage: 77.0% of statements
+ok  	github.com/vdparikh/crypto	0.029s
+```
 
 ### Usage
 Checkout the example file in the `example` folder
