@@ -2,7 +2,7 @@
 A base crypto package for GoLang. Provides easy crypto operations for - AES, HMAC, Checksum and RSA Encrypt Decrypt
 
 ```
-go get -u https://github.com/vdparikh/crypto
+go get -u github.com/vdparikh/crypto
 ```
 
 ### Tests
