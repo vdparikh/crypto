@@ -1,7 +1,6 @@
 package crypto
 
 import (
-	"bytes"
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/hmac"
@@ -18,106 +17,70 @@ import (
 	"io"
 	"log"
 	"os"
-
-	"github.com/ugorji/go/codec"
 )
 
 const ivLen = 16
 
-type encryptionObject struct {
-	KEK        string `codec:"k"`
-	Iv         []byte `codec:"i"`
-	Ciphertext []byte `codec:"c"`
-}
-
-func pad(src []byte) []byte {
-	padding := aes.BlockSize - len(src)%aes.BlockSize
-	padtext := bytes.Repeat([]byte{byte(padding)}, padding)
-	return append(src, padtext...)
-}
-
-func msgPack(obj encryptionObject) ([]byte, error) {
-	var b []byte
-	mh := new(codec.MsgpackHandle)
-	var enc *codec.Encoder
-	enc = codec.NewEncoderBytes(&b, mh)
-
-	err := enc.Encode(obj)
+// GcmEncrypt ...
+func GcmEncrypt(data []byte, gcmKey []byte) (string, error) {
+	c, err := aes.NewCipher(gcmKey)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
-	return b, nil
-}
+	gcm, err := cipher.NewGCM(c)
+	if err != nil {
+		return "", err
+	}
 
-func unpad(src []byte) []byte {
-	length := len(src)
-	unpadding := int(src[length-1])
-	return src[:(length - unpadding)]
-}
+	nonce := make([]byte, gcm.NonceSize())
+	if _, err = io.ReadFull(rand.Reader, nonce); err != nil {
+		return "", err
+	}
 
-func msgUnpack(obj []byte) (encryptionObject, error) {
-	mh := new(codec.MsgpackHandle)
-	dec := codec.NewDecoderBytes(obj, mh)
+	encryptedValue := gcm.Seal(nonce, nonce, data, nil)
 
-	var item encryptionObject
-	err := dec.Decode(&item)
-	return item, err
+	return base64.StdEncoding.EncodeToString(encryptedValue), nil
 }
 
 // AesEncrypt ...
 func AesEncrypt(data []byte, aesKey []byte) (string, error) {
-
-	// Random IV
-	iv := make([]byte, ivLen)
-	_, err := rand.Read(iv)
+	block, err := aes.NewCipher(aesKey)
 	if err != nil {
 		return "", err
 	}
-
-	// Pad Plaintext
-	padded := pad([]byte(data))
-	ciphertext := make([]byte, len(padded))
-
-	aesBlock, err := aes.NewCipher(aesKey)
-	if err != nil {
+	ciphertext := make([]byte, aes.BlockSize+len(data))
+	iv := ciphertext[:aes.BlockSize]
+	if _, err := io.ReadFull(rand.Reader, iv); err != nil {
 		return "", err
 	}
 
-	mode := cipher.NewCBCEncrypter(aesBlock, iv)
-	mode.CryptBlocks(ciphertext, padded)
+	stream := cipher.NewCFBEncrypter(block, iv)
+	stream.XORKeyStream(ciphertext[aes.BlockSize:], data)
 
-	// msgpack the KEK, IV and Ciphertext
-	obj := encryptionObject{
-		Iv:         iv,
-		Ciphertext: ciphertext,
-	}
-	packed, err := msgPack(obj)
-	return base64.StdEncoding.EncodeToString(packed), err
+	return base64.StdEncoding.EncodeToString(ciphertext), nil
 }
 
 // AesDecrypt ...
-func AesDecrypt(input string, aesKey []byte) ([]byte, error) {
-	decoded, err := base64.StdEncoding.DecodeString(input)
+func AesDecrypt(data string, aesKey []byte) ([]byte, error) {
+	decoded, _ := base64.StdEncoding.DecodeString(data)
+
+	block, err := aes.NewCipher(aesKey)
 	if err != nil {
 		return nil, err
 	}
 
-	obj, err := msgUnpack(decoded)
-	if err != nil {
-		return nil, err
+	if len(decoded) < aes.BlockSize {
+		return nil, errors.New("ciphertext too short")
 	}
+	iv := decoded[:aes.BlockSize]
+	decoded = decoded[aes.BlockSize:]
 
-	padded := make([]byte, len(obj.Ciphertext))
-	aesBlock, err := aes.NewCipher(aesKey)
-	if err != nil {
-		return nil, err
-	}
+	stream := cipher.NewCFBDecrypter(block, iv)
 
-	mode := cipher.NewCBCDecrypter(aesBlock, obj.Iv)
-	mode.CryptBlocks(padded, obj.Ciphertext)
+	stream.XORKeyStream(decoded, decoded)
 
-	return unpad(padded), nil
+	return []byte(fmt.Sprintf("%s", decoded)), nil
 }
 
 // HmacValue ...
