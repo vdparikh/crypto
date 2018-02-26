@@ -15,7 +15,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"log"
 	"os"
 )
 
@@ -108,7 +107,7 @@ func ChecksumFile(filename string) string {
 	}
 	defer f.Close()
 	if _, err := io.Copy(h, f); err != nil {
-		log.Fatal(err)
+		return ""
 	}
 	return hex.EncodeToString(h.Sum(nil))
 }
