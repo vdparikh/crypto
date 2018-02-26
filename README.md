@@ -1,6 +1,8 @@
 # crypto
 A base crypto package for GoLang. Provides easy crypto operations for - AES, HMAC, Checksum and RSA Encrypt Decrypt
 
+[![Go Report Card](https://goreportcard.com/badge/github.com/vdparikh/crypto)](https://goreportcard.com/report/github.com/vdparikh/crypto)
+
 ```
 go get -u github.com/vdparikh/crypto
 ```
