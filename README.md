@@ -28,7 +28,6 @@ go test -bench=.
 goos: darwin
 goarch: amd64
 pkg: github.com/vdparikh/crypto
-BenchmarkGcmEncrypt-8   	 1000000	      1781 ns/op
 BenchmarkAesEncrypt-8   	 1000000	      1948 ns/op
 BenchmarkAesDecrypt-8   	 1000000	      1175 ns/op
 BenchmarkRsaEncrypt-8   	   20000	     96785 ns/op
