@@ -1,5 +1,24 @@
 # crypto
-GoLang Crypto operations - AES, HMAC, Checksum and RSA Encrypt Decrypt
+A base crypto package for GoLang. Provides easy crypto operations for - AES, HMAC, Checksum and RSA Encrypt Decrypt
+
+```
+go get -u https://github.com/vdparikh/crypto
+```
+
+### Tests
+```
+go test -v
+=== RUN   TestAesEncryptDecrypt
+--- PASS: TestAesEncryptDecrypt (0.00s)
+=== RUN   TestRsaEncryptDecrypt
+--- PASS: TestRsaEncryptDecrypt (0.00s)
+=== RUN   TestHmac
+--- PASS: TestHmac (0.00s)
+=== RUN   TestChecksum
+--- PASS: TestChecksum (0.00s)
+PASS
+ok  	crypto/crypto	0.029s
+```
 
 ### Benchmarks
 ```
@@ -25,12 +44,12 @@ package main
 
 import (
 	"bytes"
-	"crypto/crypto"
 	"encoding/base64"
 	"io"
 	"io/ioutil"
 	"os"
 
+	"github.com/vdparikh/crypto"
 	log "github.com/vdparikh/logrus"
 )
 
