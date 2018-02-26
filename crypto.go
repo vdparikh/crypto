@@ -18,8 +18,6 @@ import (
 	"os"
 )
 
-const ivLen = 16
-
 // GcmEncrypt ...
 func GcmEncrypt(data []byte, gcmKey []byte) (string, error) {
 	c, err := aes.NewCipher(gcmKey)
