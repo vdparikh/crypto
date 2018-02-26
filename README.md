@@ -27,15 +27,15 @@ ok  	crypto/crypto	0.029s
 go test -bench=.
 goos: darwin
 goarch: amd64
-pkg: crypto/crypto
-BenchmarkAesEncrypt-8   	  300000	      3470 ns/op
-BenchmarkAesDecrypt-8   	 1000000	      2313 ns/op
-BenchmarkRsaEncrypt-8   	 2000000	       670 ns/op
-BenchmarkRsaDecrypt-8   	 1000000	      1207 ns/op
-BenchmarkHmac-8         	  500000	      2650 ns/op
-BenchmarkChecksum-8     	 3000000	       525 ns/op
+pkg: github.com/vdparikh/crypto
+BenchmarkAesEncrypt-8   	  500000	      3100 ns/op
+BenchmarkAesDecrypt-8   	 1000000	      2091 ns/op
+BenchmarkRsaEncrypt-8   	   20000	     97491 ns/op
+BenchmarkRsaDecrypt-8   	   10000	    210109 ns/op
+BenchmarkHmac-8         	  500000	      2550 ns/op
+BenchmarkChecksum-8     	 3000000	       512 ns/op
 PASS
-ok  	crypto/crypto	10.192s
+ok  	github.com/vdparikh/crypto	13.981s
 ```
 
 ### Coverage
