@@ -93,7 +93,7 @@ func AesEncrypt(data []byte, aesKey []byte) (string, error) {
 		Ciphertext: ciphertext,
 	}
 	packed, err := msgPack(obj)
-	return base64.StdEncoding.EncodeToString(packed), nil
+	return base64.StdEncoding.EncodeToString(packed), err
 }
 
 // AesDecrypt ...
@@ -110,6 +110,10 @@ func AesDecrypt(input string, aesKey []byte) ([]byte, error) {
 
 	padded := make([]byte, len(obj.Ciphertext))
 	aesBlock, err := aes.NewCipher(aesKey)
+	if err != nil {
+		return nil, err
+	}
+
 	mode := cipher.NewCBCDecrypter(aesBlock, obj.Iv)
 	mode.CryptBlocks(padded, obj.Ciphertext)
 
