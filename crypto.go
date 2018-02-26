@@ -18,28 +18,6 @@ import (
 	"os"
 )
 
-// GcmEncrypt ...
-func GcmEncrypt(data []byte, gcmKey []byte) (string, error) {
-	c, err := aes.NewCipher(gcmKey)
-	if err != nil {
-		return "", err
-	}
-
-	gcm, err := cipher.NewGCM(c)
-	if err != nil {
-		return "", err
-	}
-
-	nonce := make([]byte, gcm.NonceSize())
-	if _, err = io.ReadFull(rand.Reader, nonce); err != nil {
-		return "", err
-	}
-
-	encryptedValue := gcm.Seal(nonce, nonce, data, nil)
-
-	return base64.StdEncoding.EncodeToString(encryptedValue), nil
-}
-
 // AesEncrypt ...
 func AesEncrypt(data []byte, aesKey []byte) (string, error) {
 	block, err := aes.NewCipher(aesKey)
