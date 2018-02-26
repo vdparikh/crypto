@@ -1,6 +1,21 @@
 # crypto
 GoLang Crypto operations - AES, HMAC, Checksum and RSA Encrypt Decrypt
 
+### Benchmarks
+```
+go test -bench=.
+goos: darwin
+goarch: amd64
+pkg: crypto/crypto
+BenchmarkAesEncrypt-8   	  300000	      3470 ns/op
+BenchmarkAesDecrypt-8   	 1000000	      2313 ns/op
+BenchmarkRsaEncrypt-8   	 2000000	       670 ns/op
+BenchmarkRsaDecrypt-8   	 1000000	      1207 ns/op
+BenchmarkHmac-8         	  500000	      2650 ns/op
+BenchmarkChecksum-8     	 3000000	       525 ns/op
+PASS
+ok  	crypto/crypto	10.192s
+```
 
 ```shell
 go run main.go 
@@ -16,6 +31,7 @@ INFO[0000] RSA Encrypted Value:  This is a long text which will be encrypted
 
 
 ### Usage
+Checkout the example file in the `example` folder
 ```go
 package main
 
